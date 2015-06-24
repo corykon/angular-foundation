@@ -13,6 +13,7 @@
 angular.module('mm.foundation.dropdownToggle', [ 'mm.foundation.position', 'mm.foundation.mediaQueries' ])
 
 .controller('DropdownToggleController', ['$scope', '$attrs', 'mediaQueries', function($scope, $attrs, mediaQueries) {
+  this.clickAwayToClose = $scope.$parent.$eval($attrs.clickAway);
   this.small = function() {
     return mediaQueries.small() && !mediaQueries.medium();
   };
@@ -80,13 +81,15 @@ angular.module('mm.foundation.dropdownToggle', [ 'mm.foundation.position', 'mm.f
           openElement = element;
 
           closeMenu = function (event) {
-            $document.off('click', closeMenu);
-            dropdown.css('display', 'none');
-            element.removeClass('expanded');
-            closeMenu = angular.noop;
-            openElement = null;
-            if (parent.hasClass('hover')) {
-              parent.removeClass('hover');
+            if( !(controller.clickAwayToClose && dropdown[0].contains(event.target)) ) {
+              $document.off('click', closeMenu);
+              dropdown.css('display', 'none');
+              element.removeClass('expanded');
+              closeMenu = angular.noop;
+              openElement = null;
+              if (parent.hasClass('hover')) {
+                parent.removeClass('hover');
+              }
             }
           };
           $document.on('click', closeMenu);
